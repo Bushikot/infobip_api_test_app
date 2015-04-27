@@ -8,8 +8,8 @@
         }
     ],
     "require": {
-    	"itguy614/knockout": "dev-master",
-    	"twitter/bootstrap": "3.3.*@dev",
+        "itguy614/knockout": "dev-master",
+        "twitter/bootstrap": "3.3.*@dev",
         "kartik-v/bootstrap-fileinput": "dev-master"
     }
 }
