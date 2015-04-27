@@ -1,5 +1,5 @@
 {
-    "name": "Bushikot/infobip_api_test_app",
+    "name": "Bushikot/sms_test2",
     "description": "infobip api test application",
     "authors": [
         {
@@ -9,6 +9,7 @@
     ],
     "require": {
     	"itguy614/knockout": "dev-master",
-    	"twitter/bootstrap": "3.3.*@dev"
+    	"twitter/bootstrap": "3.3.*@dev",
+        "kartik-v/bootstrap-fileinput": "dev-master"
     }
 }

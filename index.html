@@ -6,6 +6,7 @@
         <meta name="author" content="bushikot@gmail.com">
         <meta name="description" content="Infobip API test application">
         <link href="vendor/twitter/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+        <link href="vendor/kartik-v/bootstrap-fileinput/css/fileinput.css" rel="stylesheet">
     </head>
     <body>
         <div class="container">
@@ -74,11 +75,15 @@
             </div>
         </div>
         
-        <script type="text/javascript" src="vendor/itguy614/knockout/js/knockout.js"></script>
-        <script type="text/javascript" src="vendor/components/jquery/jquery.min.js"></script>
+        <script src="vendor/itguy614/knockout/js/knockout.js"></script>
+        <script src="vendor/components/jquery/jquery.min.js"></script>
+        <script src="vendor/kartik-v/bootstrap-fileinput/js/fileinput.js"></script>
         
-        <script type="text/javascript">
-            var patt = /^\d{11}$/;
+        <script>
+            var patt = /^\d{11}$/,
+                danger_alert,
+                success_alert,
+                warning_alert;
             
             var PhoneListModel = function () {
                 this.sender = ko.observable("Infobip");
@@ -133,10 +138,6 @@
                     messageData.messages[0].recipients.push({"gsm": number});
                 });
                 
-                var danger_alert = $("#danger-alert");
-                var success_alert = $("#success-alert");
-                var warning_alert = $("#warning-alert");
-                
                 $.ajax({
                     method: "POST",
                     url: "php/script.php",
@@ -165,6 +166,22 @@
                 })
             }
             
+            $(function() {
+                danger_alert = $("#danger-alert");
+                success_alert = $("#success-alert");
+                warning_alert = $("#warning-alert");
+                
+		$('#fileupload').fileinput({
+                    maxFileSize: 2048,
+                    allowedFileTypes: ['text'],
+                    showPreview: false,
+                    showUpload: false,
+                    showRemove: false,
+                    browseLabel: 'Выбрать',
+                    browseClass: "btn btn-default",
+		});
+            });
+            
             function alertBlink(myAlert, alertText) {
                 myAlert.html(alertText);
                 myAlert.slideDown();
@@ -175,26 +192,30 @@
             
             function readFile(evt) {
                 var phonesFile = evt.target.files[0];
-
-                if (phonesFile.type == "text/plain") {
-                    var myReader = new FileReader();
+            
+                if (phonesFile) {
+                    var myReader = new FileReader(),
+                        k = 0;
                     myReader.onload = function(e) {
                         var contents = e.target.result;
                         contents.split("\r\n").forEach(function(pnumber){
                             if (plm.allPhones.indexOf(pnumber) < 0 && patt.test(pnumber)) {
                                 plm.allPhones.push(pnumber);
+                                k++;
+                                console.log("added phone");
+                                console.log(k);
                             }
                         });
+                        alertBlink(success_alert, "Файл обработан. Добавлено номеров: " + k);
                     }
                     myReader.readAsText(phonesFile);
                 } else {
-                    alert("Некорректный формат файла");
+                    alertBlink(danger_alert, "При загрузке из файла что-то пошло не так");
                 }           
             }           
             
             $("#sendMessageBtn").on("click", sendMessage);
             document.getElementById("fileupload").addEventListener("change", readFile, false);
         </script>
-
     </body>
 </html>

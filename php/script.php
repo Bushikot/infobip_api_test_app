@@ -32,7 +32,7 @@ $result = file_get_contents($url, false, $context);
 $response = json_decode($result);
 
 //Logging things here
-$db = new PDO('sqlite:../db/smslog');
+$db = new PDO('sqlite:../db/smslog.sqlite');
 
 if ($db && ($response->{"results"}[0]->{"status"} != "-22")) {
     $db->exec("CREATE TABLE IF NOT EXISTS response_log ("
