@@ -1,0 +1,14 @@
+{
+    "name": "Bushikot/infobip_api_test_app",
+    "description": "infobip api test application",
+    "authors": [
+        {
+            "name": "Koshechkin Denis",
+            "email": "bushikot@gmail.com"
+        }
+    ],
+    "require": {
+    	"itguy614/knockout": "dev-master",
+    	"twitter/bootstrap": "3.3.*@dev"
+    }
+}

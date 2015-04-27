@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Infobip API test app</title>
+        <meta name="author" content="bushikot@gmail.com">
+        <meta name="description" content="Infobip API test application">
+        <link href="vendor/twitter/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            
+            <div class="page-header">
+                <h1>Infobip API test app</h1>
+                <a class="text-muted" href="mailto:bushikot@gmail.com">
+                    Кошечкин Денис
+                </a>
+            </div>
+            
+            <div class="input-group">
+                <span class="input-group-addon">Отправитель</span>
+                <input type="text" class="form-control" maxlength="11" data-bind='value:sender, valueUpdate: "afterkeydown"'>
+            </div>
+            
+            <br>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Список номеров:</label>
+                        <select multiple="multiple" size="6" class="form-control" data-bind="options:allPhones, selectedOptions:selectedPhones"></select>
+                    </div>
+                    <button type="button" class="btn btn-default" data-bind="click:removePhones, enable: selectedPhones().length > 0">Удалить</button>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Ручной ввод:</label>
+                        <div class="input-group">
+                            <span class="input-group-addon">Телефон</span>
+                            <input type="text" class="form-control" maxlength="11" data-bind='value:phoneNumber, valueUpdate: "afterkeydown"'>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" data-bind="click: addPhone, enable: phoneNumber().length > 0">Добавить</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Загрузка из файла:</label>
+                        <input type="file" id="fileupload">
+                    </div>
+                </div>
+            </div>
+            
+            <br>
+            <div class="form-group">
+                <label>Текст сообщения:</label>
+                <textarea class="form-control" rows="3" data-bind="value:smsText, valueUpdate: 'afterkeydown'"></textarea>
+            </div>
+            
+            <p>
+                <span data-bind='text: smsLength'>&nbsp;</span>/160 (Количество SMS: <span data-bind='text: smsCount'>&nbsp;</span>)
+            </p>
+            
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="alert alert-success" role="alert" id="success-alert" style="display: none"></div>
+                    <div class="alert alert-warning" role="alert" id="warning-alert" style="display: none"></div>
+                    <div class="alert alert-danger" role="alert" id="danger-alert" style="display: none"></div>
+                </div>
+                
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-primary btn-lg pull-right" id="sendMessageBtn">Отправить</button>
+                </div>
+            </div>
+        </div>
+        
+        <script type="text/javascript" src="vendor/itguy614/knockout/js/knockout.js"></script>
+        <script type="text/javascript" src="vendor/components/jquery/jquery.min.js"></script>
+        
+        <script type="text/javascript">
+            var patt = /^\d{11}$/;
+            
+            var PhoneListModel = function () {
+                this.sender = ko.observable("Infobip");
+                this.phoneNumber = ko.observable("");
+                this.allPhones = ko.observableArray([]);
+                this.selectedPhones = ko.observableArray([]);
+                this.smsText = ko.observable("");
+                //console.log(this.smsText());
+                
+                this.smsLength = ko.computed(function() {
+                    return (this.smsText().length % 160);
+                }, this);
+                
+                this.smsCount = ko.computed(function() {
+                    return Math.ceil(this.smsText().length /160);
+                }, this);
+
+                this.addPhone = function () {
+                    if ((this.phoneNumber() != "") && (patt.test(this.phoneNumber())) && (this.allPhones.indexOf(this.phoneNumber()) < 0)) {
+                        this.allPhones.push(this.phoneNumber());
+                        this.phoneNumber("");
+                    }
+                };
+
+                this.removePhones = function () {
+                    this.allPhones.removeAll(this.selectedPhones());
+                    this.selectedPhones([]);
+                };
+
+            };
+
+            plm = new PhoneListModel();
+            ko.applyBindings(plm);
+            
+            function sendMessage(){
+                var messageData = {
+                    "authentication": {
+                        "username": "",
+                        "password": ""
+                    },
+                    "messages": [
+                        {
+                            "sender": plm.sender(),
+                            "text": plm.smsText(),
+                            "datacoding": "8",
+                            "recipients": []
+                        }
+                    ]
+                };
+                
+                plm.allPhones().forEach(function(number){
+                    messageData.messages[0].recipients.push({"gsm": number});
+                });
+                
+                var danger_alert = $("#danger-alert");
+                var success_alert = $("#success-alert");
+                var warning_alert = $("#warning-alert");
+                
+                $.ajax({
+                    method: "POST",
+                    url: "php/script.php",
+                    data: {messageData: JSON.stringify(messageData)}
+                })
+                .done(function(msg) {
+                    //console.log(msg);
+                    switch (msg) {
+                        case "succes": 
+                            alertBlink(success_alert, "Задание выполнено")
+                            break
+                        case "warning_1":
+                            alertBlink(warning_alert, "Не указано имя отправителя")
+                            break
+                        case "warning_2":
+                            alertBlink(warning_alert, "Текст сообщения пуст")
+                            break
+                        case "warning_3":
+                            alertBlink(warning_alert, "Список получателей пуст")
+                            break
+                    }
+
+                })
+                .fail(function(msg) {
+                    alertBlink(danger_alert, "Что-то пошло не так");
+                })
+            }
+            
+            function alertBlink(myAlert, alertText) {
+                myAlert.html(alertText);
+                myAlert.slideDown();
+                setTimeout(function() {
+                    myAlert.slideUp();
+                }, 5000);
+            }
+            
+            function readFile(evt) {
+                var phonesFile = evt.target.files[0];
+
+                if (phonesFile.type == "text/plain") {
+                    var myReader = new FileReader();
+                    myReader.onload = function(e) {
+                        var contents = e.target.result;
+                        contents.split("\r\n").forEach(function(pnumber){
+                            if (plm.allPhones.indexOf(pnumber) < 0 && patt.test(pnumber)) {
+                                plm.allPhones.push(pnumber);
+                            }
+                        });
+                    }
+                    myReader.readAsText(phonesFile);
+                } else {
+                    alert("Некорректный формат файла");
+                }           
+            }           
+            
+            $("#sendMessageBtn").on("click", sendMessage);
+            document.getElementById("fileupload").addEventListener("change", readFile, false);
+        </script>
+
+    </body>
+</html>
