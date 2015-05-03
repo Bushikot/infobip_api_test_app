@@ -3,11 +3,11 @@
 $content = json_decode($_POST["messageData"]);
 
 if (empty($content->{"messages"}[0]->{"sender"})) {
-    exit("warning_1");
+    exit("warning_sender_is_not_set");
 } elseif (empty($content->{"messages"}[0]->{"text"})) {
-    exit("warning_2");
+    exit("warning_text_is_not_set");
 } elseif (count($content->{"messages"}[0]->{"recipients"}) == 0) {
-    exit("warning_3");
+    exit("warning_recipients_is_not_set");
 }
     
 $config = file_get_contents("../config/infobip_account.json");
@@ -88,6 +88,6 @@ if ($db && ($response->{"results"}[0]->{"status"} != "-22")) {
         $stmt->bindParam(":status", $item->{"status"});
         $stmt->execute();
     }
-    echo 'succes';
+    echo 'success';
 //    echo $result;
 }
