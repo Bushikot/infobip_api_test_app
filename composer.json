@@ -18,8 +18,8 @@
     },
     "scripts": {
         "post-install-cmd": [
-            "mkdir vendor/kartik-v/bootstrap-fileinput/css && cp vendor/kartik-v/bootstrap-fileinput/css/fileinput.css components/bootstrap-fileinput/css/fileinput.css",
-            "mkdir vendor/kartik-v/bootstrap-fileinput/js && cp vendor/kartik-v/bootstrap-fileinput/js/fileinput.js components/bootstrap-fileinput/js/fileinput.js"
+            "mkdir components/bootstrap-fileinput/css && cp vendor/kartik-v/bootstrap-fileinput/css/fileinput.css components/bootstrap-fileinput/css/fileinput.css",
+            "mkdir components/bootstrap-fileinput/js && cp vendor/kartik-v/bootstrap-fileinput/js/fileinput.js components/bootstrap-fileinput/js/fileinput.js"
         ]
     }
 }
