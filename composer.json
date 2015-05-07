@@ -15,5 +15,11 @@
     },
     "config": {
         "component-dir": "components"
+    },
+    "scripts": {
+        "post-install-cmd": [
+        "cp vendor/kartik-v/bootstrap-fileinput/css/fileinput.css components/bootstrap-fileinput/css/fileinput.css",
+        "cp vendor/kartik-v/bootstrap-fileinput/js/fileinput.js components/bootstrap-fileinput/js/fileinput.js"
+        ]
     }
 }
