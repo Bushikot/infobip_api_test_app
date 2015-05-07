@@ -8,8 +8,12 @@
         }
     ],
     "require": {
+        "robloach/component-installer": "1.0.*@dev",
+        "components/bootstrap": "dev-master",
         "itguy614/knockout": "dev-master",
-        "twitter/bootstrap": "3.3.*@dev",
         "kartik-v/bootstrap-fileinput": "dev-master"
+    },
+    "config": {
+        "component-dir": "components"
     }
 }

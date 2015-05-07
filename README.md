@@ -13,4 +13,4 @@ Make a form for sending SMS through partner's API. You can found specifications 
 * Sended SMS must be written in the log(Sender name, phone number, status)
 
 ###Screenshot
-![screenshot](https://github.com/bushikot/infobip_api_test_app/raw/master/screenshot.png)
+![screenshot](https://github.com/bushikot/infobip_api_test_app/raw/master/screenshots/screenshot.png)
