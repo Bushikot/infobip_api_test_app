@@ -3,7 +3,7 @@
 ###What is this?
 Pre-employment test web-application that uses SMS service API.
 
-![**Live demo on Heroku**](https://evening-caverns-7782.herokuapp.com)
+![Live demo on Heroku](https://evening-caverns-7782.herokuapp.com)
 
 ###Technical Assignment
 Make a form for sending SMS through partner's API. You can found specifications [here](http://www.infobip.com/themes/site_themes/infobip/documentation/Infobip_HTTP_API_and_SMPP_specification.pdf).
